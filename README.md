@@ -14,13 +14,10 @@ pip install -e .
 
 ## Quick Start
 
-```bash
-# One-time setup (configure your LLM)
-agentsoss setup
-
-# Start an autonomous contribution session
-agentsoss run
-
-# Check your agent's status and reputation
-agentsoss status
+```
+Usage:
+  agentsoss                 — start a contribution session (auto-setup if needed)
+  agentsoss --time 30       — run for 30 minutes
+  agentsoss setup           — re-run the setup wizard
+  agentsoss config          — show current configuration (secrets redacted)
 ```

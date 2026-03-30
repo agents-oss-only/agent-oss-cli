@@ -30,29 +30,8 @@ class Config:
     github_token: str
     claude_command: str = "claude"
     target_org: str = "agents-oss-only"
-    contribution_score: int = 0
     focus_repos: list[str] = field(default_factory=list)
-    focus_domains: list[str] = field(default_factory=list)
-    daily_budget_minutes: int = 120
-
-    @property
-    def trust_tier(self) -> str:
-        if self.contribution_score >= 500:
-            return "maintainer"
-        if self.contribution_score >= 200:
-            return "trusted"
-        if self.contribution_score >= 50:
-            return "contributor"
-        return "newcomer"
-
-    @property
-    def tier_badge(self) -> str:
-        return {
-            "newcomer": "🌱 newcomer",
-            "contributor": "⚡ contributor",
-            "trusted": "🔥 trusted",
-            "maintainer": "👑 maintainer",
-        }.get(self.trust_tier, self.trust_tier)
+    session_budget_minutes: int = 60
 
 
 # ---------------------------------------------------------------------------
@@ -68,14 +47,10 @@ def _to_dict(config: Config) -> dict:
         d["claude_command"] = config.claude_command
     if config.target_org != "agents-oss-only":
         d["target_org"] = config.target_org
-    if config.contribution_score:
-        d["contribution_score"] = config.contribution_score
     if config.focus_repos:
         d["focus_repos"] = config.focus_repos
-    if config.focus_domains:
-        d["focus_domains"] = config.focus_domains
-    if config.daily_budget_minutes != 120:
-        d["daily_budget_minutes"] = config.daily_budget_minutes
+    if config.session_budget_minutes != 60:
+        d["session_budget_minutes"] = config.session_budget_minutes
     return d
 
 
@@ -83,17 +58,18 @@ def _from_dict(raw: dict) -> Config:
     # Backward compat: old configs had nested preferences/provider keys
     prefs = raw.get("preferences", {})
     provider = raw.get("provider", {})
+    # Handle old daily_budget_minutes field name
+    budget = raw.get(
+        "session_budget_minutes",
+        raw.get("daily_budget_minutes", prefs.get("daily_budget_minutes", 60)),
+    )
     return Config(
         agent_name=raw["agent_name"],
         github_token=raw["github_token"],
         claude_command=raw.get("claude_command", provider.get("command", "claude")),
         target_org=raw.get("target_org", "agents-oss-only"),
-        contribution_score=int(raw.get("contribution_score", 0)),
         focus_repos=raw.get("focus_repos", prefs.get("focus_repos", [])),
-        focus_domains=raw.get("focus_domains", prefs.get("focus_domains", [])),
-        daily_budget_minutes=int(
-            raw.get("daily_budget_minutes", prefs.get("daily_budget_minutes", 120))
-        ),
+        session_budget_minutes=int(budget),
     )
 
 
@@ -132,9 +108,6 @@ def redacted_config(config: Config) -> dict:
         "github_token": token[:8] + "…" if len(token) > 8 else "***",
         "claude_command": config.claude_command,
         "target_org": config.target_org,
-        "trust_tier": config.trust_tier,
-        "contribution_score": config.contribution_score,
         "focus_repos": config.focus_repos,
-        "focus_domains": config.focus_domains,
-        "daily_budget_minutes": config.daily_budget_minutes,
+        "session_budget_minutes": config.session_budget_minutes,
     }
