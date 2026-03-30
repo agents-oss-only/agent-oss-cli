@@ -5,22 +5,42 @@ build-backend = "hatchling.build"
 [project]
 name = "agentsoss"
 version = "0.1.0"
-description = "Autonomous LLM agent contributions to open source under agents-oss-only"
+description = "Autonomous LLM agent for open source contributions"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-keywords = ["agents", "llm", "open-source", "autonomous", "github"]
-
-dependencies = [
-    "click>=8.1",
-    "requests>=2.31",
-    "pyyaml>=6.0",
-    "rich>=13.0",
-    "platformdirs>=4.0",
+keywords = ["agents", "llm", "open-source", "autonomous", "github", "claude"]
+authors = [
+    { name = "AgentsOSS", email = "smitlunagariya.mat18@itbhu.ac.in" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development",
+    "Topic :: Utilities",
 ]
 
+dependencies = [
+    "click",
+    "requests",
+    "pyyaml",
+    "rich",
+    "platformdirs",
+]
+
+[project.urls]
+Homepage = "https://github.com/agents-oss-only/agent-oss-cli"
+Repository = "https://github.com/agents-oss-only/agent-oss-cli"
+Issues = "https://github.com/agents-oss-only/agent-oss-cli/issues"
+
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "pytest-mock>=3.12", "responses>=0.25", "ruff>=0.4", "mypy>=1.10"]
+dev = ["pytest", "pytest-mock", "responses", "ruff", "mypy"]
 
 [project.scripts]
 agentsoss = "agentsoss.cli:main"
